@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Pic - 手工編織像素畫指導</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧶 Pixel Pic</h1>
+            <p>將您的像素畫轉換為手工編織指導</p>
+        </header>
+
+        <main>
+            <!-- 圖片上傳區域 -->
+            <section class="upload-section">
+                <div class="upload-zone" id="uploadZone">
+                    <input type="file" id="imageInput" accept="image/*" hidden>
+                    <div class="upload-content">
+                        <div class="upload-icon">📸</div>
+                        <h3>上傳您的像素畫</h3>
+                        <p>支援 PNG, JPG, GIF 格式</p>
+                        <button class="upload-btn" id="uploadBtn">
+                            選擇圖片
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 圖片預覽和設定 -->
+            <section class="preview-section" id="previewSection" style="display: none;">
+                <div class="image-preview">
+                    <h3>圖片預覽</h3>
+                    <canvas id="originalCanvas"></canvas>
+                    <canvas id="pixelCanvas"></canvas>
+                </div>
+                
+                <div class="settings-panel">
+                    <h3>編織設定</h3>
+                    <div class="setting-group">
+                        <label for="gridWidth">網格寬度:</label>
+                        <input type="range" id="gridWidth" min="8" max="64" value="32">
+                        <span id="gridWidthValue">32</span>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label for="gridHeight">網格高度:</label>
+                        <input type="range" id="gridHeight" min="8" max="64" value="32">
+                        <span id="gridHeightValue">32</span>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <div class="grid-sync">
+                            <label>
+                                <input type="checkbox" id="keepAspectRatio" checked>
+                                保持寬高比例
+                            </label>
+                            <button class="sync-btn" id="syncDimensions">🔄 同步尺寸</button>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label for="colorCount">顏色數量:</label>
+                        <input type="range" id="colorCount" min="2" max="16" value="8">
+                        <span id="colorCountValue">8</span>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label for="analysisMethod">分析方法:</label>
+                        <select id="analysisMethod">
+                            <option value="hyab-xmeans">HyAB X-Means (推薦)</option>
+                            <option value="median-cut">Median Cut</option>
+                            <option value="deltae2000">Delta E 2000</option>
+                        </select>
+                        <div class="method-description" id="methodDescription">
+                            使用最新的 HyAB 距離公式和自動聚類，提供最準確的色彩分析
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label>
+                            <input type="checkbox" id="autoGridDetection" checked>
+                            自動檢測像素畫格子
+                        </label>
+                        <div class="grid-description">
+                            自動識別圖片中的格子結構，保持原始像素畫的格子對齊
+                        </div>
+                    </div>
+                    
+                    <button class="analyze-btn" id="analyzeBtn">開始分析</button>
+                </div>
+            </section>
+
+            <!-- 編織指導區域 -->
+            <section class="guide-section" id="guideSection" style="display: none;">
+                <div class="guide-header">
+                    <h3>編織指導</h3>
+                    <div class="progress-info">
+                        <span id="currentStep">第 1 步</span>
+                        <span id="totalSteps">共 ? 步</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="guide-content">
+                    <div class="canvas-container">
+                        <canvas id="guideCanvas"></canvas>
+                        <div class="grid-overlay" id="gridOverlay"></div>
+                    </div>
+                    
+                    <div class="instruction-panel">
+                        <div class="current-color">
+                            <h4>當前顏色</h4>
+                            <div class="color-sample" id="currentColorSample"></div>
+                            <p id="colorInstruction">請使用此顏色的織線</p>
+                            <div class="color-batch-info">
+                                <div class="batch-progress">
+                                    <span id="currentBatchStep">1</span> / <span id="totalBatchSteps">1</span>
+                                    <span class="batch-label">此顏色剩餘</span>
+                                </div>
+                                <div class="remaining-count" id="remainingCount">還需編織 0 個格子</div>
+                            </div>
+                        </div>
+                        
+                        <div class="yarn-colors">
+                            <h4>所需織線顏色</h4>
+                            <div class="analysis-info" id="analysisInfo"></div>
+                            <div class="color-palette" id="colorPalette"></div>
+                        </div>
+                        
+                        <div class="color-sequence">
+                            <h4>編織順序預覽</h4>
+                            <p class="sequence-note">蛇形編織（偶數行左→右，奇數行右→左）</p>
+                            <div class="sequence-preview" id="sequencePreview"></div>
+                        </div>
+                        
+                        <div class="position-selector">
+                            <h4>快速跳轉</h4>
+                            <p class="selector-note">點擊圖案上的格子或輸入步驟號碼來跳轉</p>
+                            <div class="jump-controls">
+                                <label for="stepInput">跳到步驟:</label>
+                                <input type="number" id="stepInput" min="1" max="1" value="1">
+                                <button class="jump-btn" id="jumpBtn">跳轉</button>
+                            </div>
+                        </div>
+                        
+                        <div class="controls">
+                            <button class="control-btn" id="prevBtn" disabled>上一步</button>
+                            <button class="control-btn" id="nextBtn">下一步</button>
+                            <button class="control-btn" id="resetBtn">重新開始</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
