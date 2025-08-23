@@ -20,6 +20,361 @@ body {
     color: #333;
 }
 
+/* 移動設備背景優化 */
+@media (max-width: 768px) {
+    body {
+        background-attachment: scroll;
+        position: relative;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+            linear-gradient(135deg, rgba(248, 249, 250, 0.85) 0%, rgba(233, 236, 239, 0.85) 50%, rgba(222, 226, 230, 0.85) 100%),
+            url('background.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        z-index: -1;
+    }
+}
+
+/* 編織指導區域簡化樣式 */
+.guide-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.current-color {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.current-color h4 {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.color-sample {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    margin: 0 auto 15px;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.remaining-count {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.6);
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.controls {
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+    margin-bottom: 25px;
+}
+
+.control-btn {
+    position: relative;
+    padding: 20px 25px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 
+        0 6px 20px rgba(0,0,0,0.15),
+        0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.control-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.control-btn:hover::before {
+    left: 100%;
+}
+
+#prevBtn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    position: relative;
+}
+
+#prevBtn::after {
+    content: '←';
+    position: absolute;
+    left: 20px;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+#nextBtn {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    position: relative;
+    box-shadow: 
+        0 8px 25px rgba(79, 172, 254, 0.4),
+        0 3px 6px rgba(0,0,0,0.1);
+}
+
+#nextBtn::after {
+    content: '→';
+    position: absolute;
+    right: 20px;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+#resetBtn {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    color: white;
+    position: relative;
+}
+
+#resetBtn::after {
+    content: '↻';
+    position: absolute;
+    right: 20px;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.control-btn:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 
+        0 12px 30px rgba(0,0,0,0.2),
+        0 5px 10px rgba(0,0,0,0.15);
+}
+
+#nextBtn:hover {
+    box-shadow: 
+        0 12px 35px rgba(79, 172, 254, 0.5),
+        0 5px 15px rgba(0,0,0,0.2);
+}
+
+.control-btn:active {
+    transform: translateY(-2px) scale(1.01);
+    transition: all 0.1s ease;
+}
+
+.control-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+    color: #6c757d;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.control-btn:disabled::before {
+    display: none;
+}
+
+.control-btn:disabled::after {
+    opacity: 0.5;
+}
+
+.jump-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.jump-controls label {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.jump-controls input {
+    width: 100px;
+    padding: 12px 16px;
+    border: 2px solid rgba(116, 75, 162, 0.3);
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.jump-controls input:focus {
+    outline: none;
+    border-color: #764ba2;
+    box-shadow: 
+        0 0 0 3px rgba(116, 75, 162, 0.2),
+        0 4px 12px rgba(0,0,0,0.15);
+    transform: scale(1.05);
+}
+
+.jump-btn {
+    position: relative;
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 
+        0 6px 20px rgba(116, 75, 162, 0.3),
+        0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+    min-width: 120px;
+}
+
+.jump-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.jump-btn:hover::before {
+    left: 100%;
+}
+
+.jump-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 
+        0 10px 25px rgba(116, 75, 162, 0.4),
+        0 4px 8px rgba(0,0,0,0.15);
+}
+
+.jump-btn:active {
+    transform: translateY(-1px) scale(1.01);
+    transition: all 0.1s ease;
+}
+
+/* 移動設備按鈕優化 */
+@media (max-width: 768px) {
+    .controls {
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .control-btn {
+        min-height: 70px;
+        padding: 25px 30px;
+        font-size: 1.2rem;
+        border-radius: 25px;
+        /* 增加觸控面積 */
+        min-width: 100%;
+    }
+    
+    .control-btn::after {
+        font-size: 1.5rem;
+    }
+    
+    /* 觸控設備的特殊懸停效果 */
+    .control-btn:active {
+        transform: scale(0.98);
+        transition: all 0.1s ease;
+    }
+    
+    .jump-controls {
+        padding: 25px;
+        gap: 20px;
+    }
+    
+    .jump-controls input {
+        width: 120px;
+        padding: 15px 20px;
+        font-size: 1.2rem;
+    }
+    
+    .jump-btn {
+        padding: 18px 35px;
+        font-size: 1.1rem;
+        min-width: 140px;
+    }
+}
+
+/* 為按鈕添加脈衝動畫 */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(79, 172, 254, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(79, 172, 254, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(79, 172, 254, 0);
+    }
+}
+
+#nextBtn {
+    animation: pulse 2s infinite;
+}
+
+#nextBtn:hover {
+    animation: none;
+}
+
+/* 成功狀態的按鈕動畫 */
+@keyframes success {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.control-btn.success {
+    animation: success 0.3s ease;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -50,9 +405,9 @@ header p {
 }
 
 .upload-zone {
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     border: 3px dashed #ddd;
     border-radius: 20px;
     padding: 60px 20px;
@@ -64,16 +419,16 @@ header p {
 
 .upload-zone:hover {
     border-color: #6c757d;
-    background: rgba(248, 249, 250, 0.5);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    background: rgba(248, 249, 250, 0.3);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
 .upload-zone.dragover {
     border-color: #6c757d;
-    background: rgba(233, 236, 239, 0.55);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(233, 236, 239, 0.35);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     transform: scale(1.02);
 }
 
@@ -110,9 +465,9 @@ header p {
 
 /* Preview Section */
 .preview-section {
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     border-radius: 20px;
     padding: 30px;
     margin-bottom: 40px;
@@ -139,9 +494,9 @@ header p {
 }
 
 .settings-panel {
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     padding: 25px;
     border-radius: 15px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
@@ -178,7 +533,7 @@ header p {
     border: 2px solid #ddd;
     border-radius: 8px;
     font-size: 1rem;
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.4);
     cursor: pointer;
     margin-bottom: 8px;
 }
@@ -252,9 +607,9 @@ header p {
 
 /* Guide Section */
 .guide-section {
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     border-radius: 20px;
     padding: 30px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.12);
@@ -329,9 +684,9 @@ header p {
 }
 
 .instruction-panel {
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     padding: 25px;
     border-radius: 15px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
@@ -409,9 +764,9 @@ header p {
     max-height: 120px;
     overflow-y: auto;
     padding: 10px;
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.6);
 }
@@ -495,9 +850,9 @@ header p {
     font-size: 1.1rem;
     font-weight: bold;
     color: #333;
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     padding: 8px 12px;
     border-radius: 6px;
     border: 1px solid rgba(255,255,255,0.6);
@@ -675,17 +1030,17 @@ header p {
 
 /* 瀏覽器兼容性 - 不支援 backdrop-filter 的備用樣式 */
 @supports not (backdrop-filter: blur(10px)) {
-    .upload-zone, 
-    .preview-section, 
+    .upload-zone,
+    .preview-section,
     .guide-section,
     .settings-panel,
     .instruction-panel {
-        background: rgba(255, 255, 255, 0.7) !important;
+        background: rgba(255, 255, 255, 0.3) !important;
     }
-    
+
     .sequence-preview,
     .remaining-count {
-        background: rgba(255, 255, 255, 0.8) !important;
+        background: rgba(255, 255, 255, 0.4) !important;
     }
 }
 

@@ -569,18 +569,13 @@ class PixelPicApp {
         this.autoGridDetection = document.getElementById('autoGridDetection');
         this.analyzeBtn = document.getElementById('analyzeBtn');
         this.currentColorSample = document.getElementById('currentColorSample');
-        this.colorInstruction = document.getElementById('colorInstruction');
-        this.colorPalette = document.getElementById('colorPalette');
         this.prevBtn = document.getElementById('prevBtn');
         this.nextBtn = document.getElementById('nextBtn');
         this.resetBtn = document.getElementById('resetBtn');
         this.currentStepSpan = document.getElementById('currentStep');
         this.totalStepsSpan = document.getElementById('totalSteps');
         this.progressFill = document.getElementById('progressFill');
-        this.currentBatchStep = document.getElementById('currentBatchStep');
-        this.totalBatchSteps = document.getElementById('totalBatchSteps');
         this.remainingCount = document.getElementById('remainingCount');
-        this.sequencePreview = document.getElementById('sequencePreview');
         this.stepInput = document.getElementById('stepInput');
         this.jumpBtn = document.getElementById('jumpBtn');
         this.analysisInfo = document.getElementById('analysisInfo');
@@ -1347,8 +1342,8 @@ class PixelPicApp {
         
         this.setupGuideCanvas();
         this.displayAnalysisInfo();
-        this.displayColorPalette();
-        this.displaySequencePreview();
+
+
         this.updateStepDisplay();
         this.highlightCurrentStep();
         this.initializeStepInput();
@@ -1400,98 +1395,14 @@ class PixelPicApp {
             this.currentStep = targetStep.step - 1;
             this.updateStepDisplay();
             this.highlightCurrentStep();
-            this.updateSequencePreview();
+
             this.updateStepInput();
         }
     }
     
-    displayColorPalette() {
-        this.colorPalette.innerHTML = '';
-        
-        this.colorPalette.forEach((color, index) => {
-            const swatch = document.createElement('div');
-            swatch.className = 'color-swatch';
-            swatch.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
-            
-            // 創建詳細的工具提示
-            const labInfo = color.lab ? 
-                `\nLAB: (${color.lab.L.toFixed(1)}, ${color.lab.a.toFixed(1)}, ${color.lab.b.toFixed(1)})` : 
-                '';
-            
-            swatch.title = `顏色 ${index + 1}\nRGB: (${color.r}, ${color.g}, ${color.b})${labInfo}`;
-            
-            // 添加顏色編號
-            const label = document.createElement('span');
-            label.className = 'color-label';
-            label.textContent = index + 1;
-            swatch.appendChild(label);
-            
-            this.colorPalette.appendChild(swatch);
-        });
-    }
+
     
-    displaySequencePreview() {
-        this.sequencePreview.innerHTML = '';
-        
-        // 直接按順序顯示所有步驟，並在換色處添加分隔符
-        this.stitchingPattern.forEach((step, index) => {
-            // 檢查是否需要添加換色分隔符
-            if (index > 0) {
-                const prevColor = this.stitchingPattern[index - 1].color;
-                const currentColor = step.color;
-                const prevColorKey = `${prevColor.r},${prevColor.g},${prevColor.b}`;
-                const currentColorKey = `${currentColor.r},${currentColor.g},${currentColor.b}`;
-                
-                if (prevColorKey !== currentColorKey) {
-                    const separator = document.createElement('div');
-                    separator.className = 'batch-separator';
-                    separator.title = '換色點';
-                    this.sequencePreview.appendChild(separator);
-                }
-            }
-            
-            // 創建步驟方塊
-            const item = document.createElement('div');
-            item.className = 'sequence-item';
-            item.style.backgroundColor = `rgb(${step.color.r}, ${step.color.g}, ${step.color.b})`;
-            item.title = `步驟 ${step.step}: 第${Math.floor(step.y) + 1}行第${step.x + 1}列 - RGB(${step.color.r}, ${step.color.g}, ${step.color.b})`;
-            
-            // 點擊跳轉到該步驟
-            item.addEventListener('click', () => {
-                this.currentStep = index;
-                this.updateStepDisplay();
-                this.highlightCurrentStep();
-                this.updateSequencePreview();
-            });
-            
-            this.sequencePreview.appendChild(item);
-        });
-        
-        this.updateSequencePreview();
-    }
-    
-    updateSequencePreview() {
-        const items = this.sequencePreview.querySelectorAll('.sequence-item');
-        items.forEach((item, index) => {
-            item.classList.remove('current', 'completed');
-            
-            if (index === this.currentStep) {
-                item.classList.add('current');
-            } else if (index < this.currentStep) {
-                item.classList.add('completed');
-            }
-        });
-        
-        // 滾動到當前步驟
-        const currentItem = items[this.currentStep];
-        if (currentItem) {
-            currentItem.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'nearest',
-                inline: 'center'
-            });
-        }
-    }
+
     
     highlightCurrentStep() {
         if (this.currentStep >= this.stitchingPattern.length) return;
@@ -1512,22 +1423,9 @@ class PixelPicApp {
         const color = step.color;
         this.currentColorSample.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
         
-        // 顯示更詳細的色彩信息
-        const labInfo = color.lab ? 
-            `LAB(${color.lab.L.toFixed(1)}, ${color.lab.a.toFixed(1)}, ${color.lab.b.toFixed(1)})` : 
-            '';
+
         
-        this.colorInstruction.innerHTML = `
-            <strong>位置:</strong> 第${step.y + 1}行第${step.x + 1}列<br>
-            <strong>RGB:</strong> (${color.r}, ${color.g}, ${color.b})<br>
-            ${labInfo ? `<strong>LAB:</strong> ${labInfo}<br>` : ''}
-            <strong>織線:</strong> 請使用此顏色的織線
-        `;
-        
-        // 更新調色板中的活躍顏色
-        document.querySelectorAll('.color-swatch').forEach((swatch, index) => {
-            swatch.classList.toggle('active', index === color.index);
-        });
+
         
         // 更新顏色批次信息
         this.updateColorBatchInfo();
@@ -1550,8 +1448,7 @@ class PixelPicApp {
         const stepInBatch = this.currentStep - currentBatch.startStep + 1;
         const remainingInBatch = currentBatch.count - stepInBatch + 1;
         
-        this.currentBatchStep.textContent = stepInBatch;
-        this.totalBatchSteps.textContent = currentBatch.count;
+
         
         // 檢查下一步是否會換色
         const nextStep = this.currentStep + 1;
@@ -1611,7 +1508,7 @@ class PixelPicApp {
             this.currentStep--;
             this.updateStepDisplay();
             this.highlightCurrentStep();
-            this.updateSequencePreview();
+
             this.updateStepInput();
         }
     }
@@ -1621,7 +1518,7 @@ class PixelPicApp {
             this.currentStep++;
             this.updateStepDisplay();
             this.highlightCurrentStep();
-            this.updateSequencePreview();
+
             this.updateStepInput();
         }
     }
@@ -1661,7 +1558,7 @@ class PixelPicApp {
             this.currentStep = targetStep - 1;
             this.updateStepDisplay();
             this.highlightCurrentStep();
-            this.updateSequencePreview();
+
         } else {
             alert(`請輸入 1 到 ${this.totalSteps} 之間的步驟號碼`);
             this.updateStepInput();
