@@ -1268,13 +1268,18 @@ class PixelPicApp {
     }
     
     createSequentialPattern() {
-        // 蛇形編織順序（之字形）
+        // 蛇形編織順序（之字形）- 從右下角開始
         const pattern = [];
+        const rows = this.pixelData.length;
+        const cols = this.pixelData[0].length;
         
-        for (let y = 0; y < this.pixelData.length; y++) {
-            if (y % 2 === 0) {
-                // 偶數行：從左到右
-                for (let x = 0; x < this.pixelData[y].length; x++) {
+        // 從最後一行開始，往上編織
+        for (let y = rows - 1; y >= 0; y--) {
+            const rowIndex = rows - 1 - y; // 計算是第幾行（從下往上）
+            
+            if (rowIndex % 2 === 0) {
+                // 第一行（最下面）和奇數行：從右到左
+                for (let x = cols - 1; x >= 0; x--) {
                     pattern.push({
                         x: x,
                         y: y,
@@ -1283,8 +1288,8 @@ class PixelPicApp {
                     });
                 }
             } else {
-                // 奇數行：從右到左
-                for (let x = this.pixelData[y].length - 1; x >= 0; x--) {
+                // 偶數行：從左到右
+                for (let x = 0; x < cols; x++) {
                     pattern.push({
                         x: x,
                         y: y,
