@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>部署檢查工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .check-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+        .pass { background: #d4edda; color: #155724; }
+        .fail { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .test-area {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 GitHub Pages 部署檢查工具</h1>
+    
+    <div class="check-item">
+        <h3>瀏覽器兼容性檢查</h3>
+        <div id="browser-info"></div>
+    </div>
+    
+    <div class="check-item">
+        <h3>backdrop-filter 支持測試</h3>
+        <div class="test-area">
+            這個區域應該有半透明背景和模糊效果
+        </div>
+        <div id="backdrop-support"></div>
+    </div>
+    
+    <div class="check-item">
+        <h3>文件載入檢查</h3>
+        <div id="file-check"></div>
+    </div>
+    
+    <div class="check-item">
+        <h3>JavaScript 功能檢查</h3>
+        <div id="js-check"></div>
+    </div>
+
+    <script>
+        // 瀏覽器信息
+        document.getElementById('browser-info').innerHTML = `
+            <strong>用戶代理:</strong> ${navigator.userAgent}<br>
+            <strong>平台:</strong> ${navigator.platform}<br>
+            <strong>語言:</strong> ${navigator.language}
+        `;
+
+        // backdrop-filter 支持檢查
+        const testEl = document.querySelector('.test-area');
+        const computed = getComputedStyle(testEl);
+        const backdropSupport = computed.backdropFilter !== 'none' || computed.webkitBackdropFilter !== 'none';
+        
+        document.getElementById('backdrop-support').innerHTML = `
+            backdrop-filter 支持: <span class="status ${backdropSupport ? 'pass' : 'fail'}">
+                ${backdropSupport ? '✓ 支持' : '✗ 不支持'}
+            </span><br>
+            當前值: ${computed.backdropFilter || computed.webkitBackdropFilter || '無'}
+        `;
+
+        // 文件載入檢查
+        Promise.all([
+            fetch('script.js').then(r => r.ok),
+            fetch('styles.css').then(r => r.ok),
+            fetch('background.jpg').then(r => r.ok)
+        ]).then(results => {
+            const [js, css, img] = results;
+            document.getElementById('file-check').innerHTML = `
+                script.js: <span class="status ${js ? 'pass' : 'fail'}">${js ? '✓ 載入成功' : '✗ 載入失敗'}</span><br>
+                styles.css: <span class="status ${css ? 'pass' : 'fail'}">${css ? '✓ 載入成功' : '✗ 載入失敗'}</span><br>
+                background.jpg: <span class="status ${img ? 'pass' : 'fail'}">${img ? '✓ 載入成功' : '✗ 載入失敗'}</span>
+            `;
+        }).catch(e => {
+            document.getElementById('file-check').innerHTML = `
+                <span class="status fail">✗ 文件檢查失敗: ${e.message}</span>
+            `;
+        });
+
+        // JavaScript 功能檢查
+        let jsStatus = '✓ 基本功能正常';
+        let jsClass = 'pass';
+        
+        try {
+            // 測試 ES6 功能
+            const testArrow = () => 'arrow function works';
+            const testTemplate = `template literal works`;
+            const testConst = 'const works';
+            
+            // 測試 Canvas API
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            if (!ctx) throw new Error('Canvas API 不支持');
+            
+        } catch (e) {
+            jsStatus = `✗ JavaScript 錯誤: ${e.message}`;
+            jsClass = 'fail';
+        }
+        
+        document.getElementById('js-check').innerHTML = `
+            <span class="status ${jsClass}">${jsStatus}</span>
+        `;
+
+        // 添加當前頁面信息
+        document.body.innerHTML += `
+            <div class="check-item">
+                <h3>當前頁面信息</h3>
+                <strong>URL:</strong> ${window.location.href}<br>
+                <strong>協議:</strong> ${window.location.protocol}<br>
+                <strong>域名:</strong> ${window.location.hostname}<br>
+                <strong>時間:</strong> ${new Date().toLocaleString()}
+            </div>
+        `;
+    </script>
+</body>
+</html>

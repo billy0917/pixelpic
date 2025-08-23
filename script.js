@@ -1346,6 +1346,7 @@ class PixelPicApp {
 
         this.updateStepDisplay();
         this.highlightCurrentStep();
+        this.updateColorBatchInfo();
         this.initializeStepInput();
     }
     
@@ -1442,8 +1443,19 @@ class PixelPicApp {
     }
     
     updateColorBatchInfo() {
+        // 安全檢查
+        if (!this.remainingCount || !this.stitchingPattern || this.stitchingPattern.length === 0) {
+            if (this.remainingCount) {
+                this.remainingCount.textContent = '載入中...';
+            }
+            return;
+        }
+        
         const currentBatch = this.getCurrentColorBatch();
-        if (!currentBatch) return;
+        if (!currentBatch) {
+            this.remainingCount.textContent = '計算中...';
+            return;
+        }
         
         const stepInBatch = this.currentStep - currentBatch.startStep + 1;
         const remainingInBatch = currentBatch.count - stepInBatch + 1;

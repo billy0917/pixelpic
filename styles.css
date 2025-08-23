@@ -1029,18 +1029,36 @@ header p {
 }
 
 /* 瀏覽器兼容性 - 不支援 backdrop-filter 的備用樣式 */
-@supports not (backdrop-filter: blur(10px)) {
+@supports not (backdrop-filter: blur(5px)) {
     .upload-zone,
     .preview-section,
     .guide-section,
     .settings-panel,
     .instruction-panel {
-        background: rgba(255, 255, 255, 0.3) !important;
+        background: rgba(255, 255, 255, 0.4) !important;
+        border: 1px solid rgba(255, 255, 255, 0.6) !important;
     }
 
     .sequence-preview,
     .remaining-count {
-        background: rgba(255, 255, 255, 0.4) !important;
+        background: rgba(255, 255, 255, 0.5) !important;
+        border: 1px solid rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    .jump-controls {
+        background: rgba(255, 255, 255, 0.25) !important;
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    }
+}
+
+/* 針對 Safari 和某些移動瀏覽器的特別處理 */
+@media (-webkit-min-device-pixel-ratio: 1) {
+    .upload-zone,
+    .preview-section,
+    .guide-section,
+    .settings-panel,
+    .instruction-panel {
+        -webkit-backdrop-filter: blur(3px);
     }
 }
 
