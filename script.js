@@ -830,6 +830,9 @@ class PixelPicApp {
         this.colorPalette = [];
         this.currentStep = 0;
         this.totalSteps = 0;
+        // 清理Canvas緩存
+        this.baseCanvasImageData = null;
+        this.canvasClickListenerAdded = false;
         this.stitchingPattern = [];
         this.colorBatches = [];
         this.detectedGrid = null;
@@ -1358,7 +1361,30 @@ class PixelPicApp {
         this.guideCanvas.width = gridWidth * cellSize;
         this.guideCanvas.height = gridHeight * cellSize;
         
+        // 只繪製一次基礎圖案，並緩存
+        if (!this.baseCanvasImageData) {
+            this.drawBaseCanvas();
+        } else {
+            // 使用緩存的圖案數據
+            const ctx = this.guideCanvas.getContext('2d');
+            ctx.putImageData(this.baseCanvasImageData, 0, 0);
+        }
+        
+        // 添加點擊事件監聽器（只添加一次）
+        if (!this.canvasClickListenerAdded) {
+            this.guideCanvas.addEventListener('click', (e) => this.handleCanvasClick(e));
+            this.canvasClickListenerAdded = true;
+        }
+    }
+    
+    drawBaseCanvas() {
+        const cellSize = 20;
+        const gridWidth = this.pixelData[0].length;
+        const gridHeight = this.pixelData.length;
         const ctx = this.guideCanvas.getContext('2d');
+        
+        // 批量繪製以提高性能
+        ctx.imageSmoothingEnabled = false; // 禁用抗鋸齒以提高性能
         
         // 繪製完整圖案
         for (let y = 0; y < gridHeight; y++) {
@@ -1366,16 +1392,30 @@ class PixelPicApp {
                 const color = this.pixelData[y][x];
                 ctx.fillStyle = `rgb(${color.r}, ${color.g}, ${color.b})`;
                 ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-                
-                // 繪製網格線
-                ctx.strokeStyle = '#ddd';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
             }
         }
         
-        // 添加點擊事件監聽器
-        this.guideCanvas.addEventListener('click', (e) => this.handleCanvasClick(e));
+        // 一次性繪製所有網格線
+        ctx.strokeStyle = '#ddd';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        
+        // 垂直線
+        for (let x = 0; x <= gridWidth; x++) {
+            ctx.moveTo(x * cellSize, 0);
+            ctx.lineTo(x * cellSize, gridHeight * cellSize);
+        }
+        
+        // 水平線  
+        for (let y = 0; y <= gridHeight; y++) {
+            ctx.moveTo(0, y * cellSize);
+            ctx.lineTo(gridWidth * cellSize, y * cellSize);
+        }
+        
+        ctx.stroke();
+        
+        // 緩存基礎圖案
+        this.baseCanvasImageData = ctx.getImageData(0, 0, this.guideCanvas.width, this.guideCanvas.height);
     }
     
     handleCanvasClick(e) {
@@ -1407,30 +1447,45 @@ class PixelPicApp {
     
     highlightCurrentStep() {
         if (this.currentStep >= this.stitchingPattern.length) return;
-        
+
         const step = this.stitchingPattern[this.currentStep];
-        const cellSize = 20;
-        const ctx = this.guideCanvas.getContext('2d');
-        
-        // 重繪整個canvas
-        this.setupGuideCanvas();
-        
-        // 突出顯示當前步驟
-        ctx.strokeStyle = '#ff4444';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(step.x * cellSize, step.y * cellSize, cellSize, cellSize);
-        
-        // 更新當前顏色顯示
+
+        // 使用節流來減少Canvas重繪頻率
+        if (this.highlightThrottle) {
+            clearTimeout(this.highlightThrottle);
+        }
+
+        this.highlightThrottle = setTimeout(() => {
+            const cellSize = 20;
+            const ctx = this.guideCanvas.getContext('2d');
+
+            // 恢復基礎圖案（高效）
+            if (this.baseCanvasImageData) {
+                ctx.putImageData(this.baseCanvasImageData, 0, 0);
+            } else {
+                this.setupGuideCanvas();
+            }
+
+            // 只繪製高亮框
+            this.drawHighlight(step.x, step.y, cellSize, ctx);
+        }, 16); // 約60fps
+
+        // 立即更新顏色顯示（不需要節流）
         const color = step.color;
         this.currentColorSample.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
-        
 
-        
-
-        
         // 更新顏色批次信息
         this.updateColorBatchInfo();
     }
+    
+    drawHighlight(x, y, cellSize, ctx) {
+        // 簡化高亮繪製以節省GPU
+        ctx.strokeStyle = '#ff4444';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x * cellSize + 1, y * cellSize + 1, cellSize - 2, cellSize - 2);
+    }
+    
+    // 移除性能監控以節省開銷
     
     getCurrentColorBatch() {
         // 找到當前步驟所屬的顏色批次
@@ -1450,57 +1505,46 @@ class PixelPicApp {
             }
             return;
         }
-        
-        const currentBatch = this.getCurrentColorBatch();
-        if (!currentBatch) {
+
+        const currentStep = this.stitchingPattern[this.currentStep];
+        if (!currentStep) {
             this.remainingCount.textContent = '計算中...';
             return;
         }
-        
-        const stepInBatch = this.currentStep - currentBatch.startStep + 1;
-        const remainingInBatch = currentBatch.count - stepInBatch + 1;
-        
 
-        
-        // 檢查下一步是否會換色
-        const nextStep = this.currentStep + 1;
-        let willChangeColor = false;
-        
-        if (nextStep < this.totalSteps) {
-            const currentColor = this.stitchingPattern[this.currentStep].color;
-            const nextColor = this.stitchingPattern[nextStep].color;
-            const currentColorKey = `${currentColor.r},${currentColor.g},${currentColor.b}`;
-            const nextColorKey = `${nextColor.r},${nextColor.g},${nextColor.b}`;
-            willChangeColor = currentColorKey !== nextColorKey;
-        }
-        
-        if (willChangeColor) {
-            this.remainingCount.textContent = `下一步將換色`;
-            this.remainingCount.style.background = '#fff3cd';
-            this.remainingCount.style.color = '#856404';
-        } else if (remainingInBatch > 1) {
-            // 計算到下次換色還有多少步
-            let stepsToNextColorChange = 0;
-            for (let i = this.currentStep + 1; i < this.totalSteps; i++) {
-                const currentColor = this.stitchingPattern[this.currentStep].color;
-                const futureColor = this.stitchingPattern[i].color;
-                const currentColorKey = `${currentColor.r},${currentColor.g},${currentColor.b}`;
-                const futureColorKey = `${futureColor.r},${futureColor.g},${futureColor.b}`;
-                
-                if (currentColorKey === futureColorKey) {
-                    stepsToNextColorChange++;
-                } else {
-                    break;
-                }
+        // 計算相同顏色還有多少步
+        const currentColor = currentStep.color;
+        let remainingSteps = 0;
+
+        // 從當前步驟開始向後計算相同顏色的步數
+        for (let i = this.currentStep + 1; i < this.totalSteps; i++) {
+            const futureColor = this.stitchingPattern[i].color;
+            if (currentColor.r === futureColor.r &&
+                currentColor.g === futureColor.g &&
+                currentColor.b === futureColor.b) {
+                remainingSteps++;
+            } else {
+                break; // 遇到不同顏色就停止
             }
-            
-            this.remainingCount.textContent = `此顏色還有 ${stepsToNextColorChange} 步`;
-            this.remainingCount.style.background = 'white';
+        }
+
+        // 顯示結果
+        if (remainingSteps > 0) {
+            this.remainingCount.textContent = `此顏色還有 ${remainingSteps} 步`;
+            this.remainingCount.style.background = 'rgba(255, 255, 255, 0.15)';
             this.remainingCount.style.color = '#333';
         } else {
-            this.remainingCount.textContent = `此顏色最後一步`;
-            this.remainingCount.style.background = '#e8f5e8';
-            this.remainingCount.style.color = '#2d5a2d';
+            // 檢查下一步是否會換色
+            const nextStep = this.currentStep + 1;
+            if (nextStep < this.totalSteps) {
+                this.remainingCount.textContent = `下一步將換色`;
+                this.remainingCount.style.background = 'rgba(255, 243, 205, 0.15)';
+                this.remainingCount.style.color = '#856404';
+            } else {
+                this.remainingCount.textContent = `最後一步`;
+                this.remainingCount.style.background = 'rgba(232, 245, 232, 0.15)';
+                this.remainingCount.style.color = '#2d5a2d';
+            }
         }
     }
     
@@ -1539,7 +1583,6 @@ class PixelPicApp {
         this.currentStep = 0;
         this.updateStepDisplay();
         this.highlightCurrentStep();
-        this.updateSequencePreview();
         this.updateStepInput();
     }
     
