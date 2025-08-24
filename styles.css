@@ -350,10 +350,23 @@ body {
         width: 140px;
         height: 110px;
         margin: 0 auto;
+        /* 確保移動設備上保持動畫效果 */
+        transition: .3s ease;
+        transform-style: preserve-3d;
+        -webkit-transform-style: preserve-3d;
     }
 
     .btn-3d .front {
         font-size: 2rem;
+        /* 確保前面板動畫效果 */
+        transition: .15s ease;
+        transform: translateY(-15%);
+        -webkit-transform: translateY(-15%);
+    }
+
+    .btn-3d:active .front {
+        transform: translateY(0%) !important;
+        -webkit-transform: translateY(0%) !important;
     }
 
     .btn-3d-container {
@@ -393,10 +406,23 @@ body {
     .btn-3d {
         width: 120px;
         height: 95px;
+        /* 確保小屏幕設備上保持動畫效果 */
+        transition: .3s ease;
+        transform-style: preserve-3d;
+        -webkit-transform-style: preserve-3d;
     }
 
     .btn-3d .front {
         font-size: 1.8rem;
+        /* 確保前面板動畫效果 */
+        transition: .15s ease;
+        transform: translateY(-15%);
+        -webkit-transform: translateY(-15%);
+    }
+
+    .btn-3d:active .front {
+        transform: translateY(0%) !important;
+        -webkit-transform: translateY(0%) !important;
     }
 
     .btn-3d-label {
@@ -1037,10 +1063,20 @@ header p {
 
 /* 移動設備性能優化 - 進一步簡化 */
 @media (max-width: 768px) {
-    * {
-        /* 禁用所有變換動畫以節省GPU */
+    /* 只對非按鈕元素禁用變換動畫 */
+    .guide-content,
+    .preview-section,
+    .settings-panel {
         transform-style: flat;
         -webkit-transform-style: flat;
+    }
+
+    /* 確保3D按鈕保持動畫效果 */
+    .btn-3d,
+    .btn-3d .front,
+    .btn-3d .back {
+        transform-style: preserve-3d !important;
+        -webkit-transform-style: preserve-3d !important;
     }
 
     /* 移動設備Canvas優化 */
