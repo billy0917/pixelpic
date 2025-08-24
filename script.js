@@ -609,6 +609,9 @@ class PixelPicApp {
         this.prevBtn.addEventListener('click', () => this.previousStep());
         this.nextBtn.addEventListener('click', () => this.nextStep());
         this.jumpBtn.addEventListener('click', () => this.jumpToStep());
+
+        // 為3D按鈕添加觸控動畫支持
+        this.addTouchAnimationSupport();
         
         // 步驟輸入事件
         this.stepInput.addEventListener('keypress', (e) => {
@@ -1611,6 +1614,73 @@ class PixelPicApp {
             alert(`請輸入 1 到 ${this.totalSteps} 之間的步驟號碼`);
             this.updateStepInput();
         }
+    }
+
+    // 為3D按鈕添加觸控動畫支持
+    addTouchAnimationSupport() {
+        const btn3dElements = document.querySelectorAll('.btn-3d');
+
+        btn3dElements.forEach(button => {
+            // 觸控開始事件
+            button.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // 防止默認行為
+                const front = button.querySelector('.front');
+                if (front) {
+                    front.style.transform = 'translateY(0%)';
+                    front.style.webkitTransform = 'translateY(0%)';
+                    front.style.boxShadow = '0 0';
+                }
+            }, { passive: false });
+
+            // 觸控結束事件
+            button.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                const front = button.querySelector('.front');
+                if (front) {
+                    front.style.transform = 'translateY(-15%)';
+                    front.style.webkitTransform = 'translateY(-15%)';
+                    front.style.boxShadow = '0 .5em 1em -0.2em rgba(0,0,0,.3)';
+                }
+            }, { passive: false });
+
+            // 觸控取消事件（手指移出按鈕區域）
+            button.addEventListener('touchcancel', (e) => {
+                const front = button.querySelector('.front');
+                if (front) {
+                    front.style.transform = 'translateY(-15%)';
+                    front.style.webkitTransform = 'translateY(-15%)';
+                    front.style.boxShadow = '0 .5em 1em -0.2em rgba(0,0,0,.3)';
+                }
+            });
+
+            // 鼠標事件（桌面支持）
+            button.addEventListener('mousedown', (e) => {
+                const front = button.querySelector('.front');
+                if (front) {
+                    front.style.transform = 'translateY(0%)';
+                    front.style.webkitTransform = 'translateY(0%)';
+                    front.style.boxShadow = '0 0';
+                }
+            });
+
+            button.addEventListener('mouseup', (e) => {
+                const front = button.querySelector('.front');
+                if (front) {
+                    front.style.transform = 'translateY(-15%)';
+                    front.style.webkitTransform = 'translateY(-15%)';
+                    front.style.boxShadow = '0 .5em 1em -0.2em rgba(0,0,0,.3)';
+                }
+            });
+
+            button.addEventListener('mouseleave', (e) => {
+                const front = button.querySelector('.front');
+                if (front) {
+                    front.style.transform = 'translateY(-15%)';
+                    front.style.webkitTransform = 'translateY(-15%)';
+                    front.style.boxShadow = '0 .5em 1em -0.2em rgba(0,0,0,.3)';
+                }
+            });
+        });
     }
 }
 
