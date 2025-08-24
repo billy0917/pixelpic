@@ -1623,25 +1623,25 @@ class PixelPicApp {
         btn3dElements.forEach(button => {
             // 觸控開始事件
             button.addEventListener('touchstart', (e) => {
-                e.preventDefault(); // 防止默認行為
+                // 不阻止默認行為，保持原有功能
                 const front = button.querySelector('.front');
                 if (front) {
                     front.style.transform = 'translateY(0%)';
                     front.style.webkitTransform = 'translateY(0%)';
                     front.style.boxShadow = '0 0';
                 }
-            }, { passive: false });
+            });
 
             // 觸控結束事件
             button.addEventListener('touchend', (e) => {
-                e.preventDefault();
+                // 不阻止默認行為，保持原有功能
                 const front = button.querySelector('.front');
                 if (front) {
                     front.style.transform = 'translateY(-15%)';
                     front.style.webkitTransform = 'translateY(-15%)';
                     front.style.boxShadow = '0 .5em 1em -0.2em rgba(0,0,0,.3)';
                 }
-            }, { passive: false });
+            });
 
             // 觸控取消事件（手指移出按鈕區域）
             button.addEventListener('touchcancel', (e) => {
