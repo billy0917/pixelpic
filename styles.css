@@ -12,10 +12,10 @@ body {
     background:
         linear-gradient(135deg, rgba(248, 249, 250, 0.85) 0%, rgba(233, 236, 239, 0.85) 50%, rgba(222, 226, 230, 0.85) 100%),
         url('background.jpg');
-    background-size: contain;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
+    background-size: 30vw auto;
+    background-position: center top;
+    background-attachment: scroll;
+    background-repeat: repeat;
     min-height: 100vh;
     color: #333;
 }
@@ -982,8 +982,9 @@ header p {
 /* 超大屏幕優化 */
 @media (min-width: 1400px) {
     body {
-        background-size: contain;
-        background-position: center center;
+        background-size: 25vw auto;
+        background-position: center top;
+        background-repeat: repeat;
     }
 }
 
