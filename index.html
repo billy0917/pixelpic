@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+        <div class="bg-fixed"></div>
+
     <div class="container">
         <header>
             <h1>🧶 Pixel Pic</h1>
@@ -36,7 +38,7 @@
                     <canvas id="originalCanvas"></canvas>
                     <canvas id="pixelCanvas"></canvas>
                 </div>
-                
+
                 <div class="settings-panel">
                     <h3>編織設定</h3>
                     <div class="setting-group">
@@ -44,13 +46,13 @@
                         <input type="range" id="gridWidth" min="8" max="64" value="32">
                         <span id="gridWidthValue">32</span>
                     </div>
-                    
+
                     <div class="setting-group">
                         <label for="gridHeight">網格高度:</label>
                         <input type="range" id="gridHeight" min="8" max="64" value="32">
                         <span id="gridHeightValue">32</span>
                     </div>
-                    
+
                     <div class="setting-group">
                         <div class="grid-sync">
                             <label>
@@ -60,13 +62,13 @@
                             <button class="sync-btn" id="syncDimensions">🔄 同步尺寸</button>
                         </div>
                     </div>
-                    
+
                     <div class="setting-group">
                         <label for="colorCount">顏色數量:</label>
                         <input type="range" id="colorCount" min="2" max="16" value="8">
                         <span id="colorCountValue">8</span>
                     </div>
-                    
+
                     <div class="setting-group">
                         <label for="analysisMethod">分析方法:</label>
                         <select id="analysisMethod">
@@ -78,7 +80,7 @@
                             使用最新的 HyAB 距離公式和自動聚類，提供最準確的色彩分析
                         </div>
                     </div>
-                    
+
                     <div class="setting-group">
                         <label>
                             <input type="checkbox" id="autoGridDetection" checked>
@@ -88,7 +90,7 @@
                             自動識別圖片中的格子結構，保持原始像素畫的格子對齊
                         </div>
                     </div>
-                    
+
                     <button class="analyze-btn" id="analyzeBtn">開始分析</button>
                 </div>
             </section>
@@ -111,7 +113,7 @@
                         <canvas id="guideCanvas"></canvas>
                         <div class="grid-overlay" id="gridOverlay"></div>
                     </div>
-                    
+
                     <div class="instruction-panel">
                         <div class="current-color">
                             <h4>當前步驟</h4>
@@ -138,4 +140,4 @@
 
     <script src="script.js"></script>
 </body>
-</html> 
+</html>
