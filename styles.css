@@ -430,6 +430,40 @@ body {
     }
 }
 
+/* 粒子效果樣式 */
+.particle {
+    position: fixed;
+    width: 35px;
+    height: 35px;
+    background-image: url('bear.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 1;
+    transform-origin: center;
+}
+
+.particle.animate {
+    animation: particleFloat 1.5s ease-out forwards;
+}
+
+@keyframes particleFloat {
+    0% {
+        opacity: 1;
+        transform: scale(0.8) rotate(0deg) translate(0, 0);
+    }
+    50% {
+        opacity: 0.9;
+        transform: scale(1.2) rotate(180deg) translate(var(--dx, 0), var(--dy, 0));
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.6) rotate(360deg) translate(var(--dx, 0), var(--dy, 0));
+    }
+}
+
 /* 移除所有動畫以節省GPU */
 
 .container {

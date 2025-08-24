@@ -1641,6 +1641,9 @@ class PixelPicApp {
                     front.style.webkitTransform = 'translateY(-15%)';
                     front.style.boxShadow = '0 .5em 1em -0.2em rgba(0,0,0,.3)';
                 }
+
+                // 觸發粒子效果
+                this.createParticleEffect(button);
             });
 
             // 觸控取消事件（手指移出按鈕區域）
@@ -1670,6 +1673,9 @@ class PixelPicApp {
                     front.style.webkitTransform = 'translateY(-15%)';
                     front.style.boxShadow = '0 .5em 1em -0.2em rgba(0,0,0,.3)';
                 }
+
+                // 觸發粒子效果
+                this.createParticleEffect(button);
             });
 
             button.addEventListener('mouseleave', (e) => {
@@ -1681,6 +1687,49 @@ class PixelPicApp {
                 }
             });
         });
+    }
+
+    // 創建粒子效果
+    createParticleEffect(button) {
+        const buttonRect = button.getBoundingClientRect();
+        const centerX = buttonRect.left + buttonRect.width / 2;
+        const centerY = buttonRect.top + buttonRect.height / 2;
+
+        // 創建多個粒子
+        const particleCount = 8;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+
+            // 設置粒子初始位置
+            particle.style.left = centerX + 'px';
+            particle.style.top = centerY + 'px';
+
+            // 計算隨機方向和距離
+            const angle = (360 / particleCount) * i + Math.random() * 45 - 22.5;
+            const distance = 80 + Math.random() * 40;
+            const radians = angle * Math.PI / 180;
+
+            const dx = Math.cos(radians) * distance;
+            const dy = Math.sin(radians) * distance;
+
+            // 添加到頁面
+            document.body.appendChild(particle);
+
+            // 設置動畫變量
+            particle.style.setProperty('--dx', dx + 'px');
+            particle.style.setProperty('--dy', dy + 'px');
+
+            // 使用CSS動畫
+            particle.classList.add('animate');
+
+            // 動畫結束後移除粒子
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 1500);
+        }
     }
 }
 
