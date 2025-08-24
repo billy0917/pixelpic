@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pixel Pic - 手工編織像素畫指導</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
-        <div class="bg-fixed"></div>
-
     <div class="container">
         <header>
             <h1>🧶 Pixel Pic</h1>
@@ -122,9 +120,20 @@
                         </div>
 
                         <div class="controls">
-                            <button class="control-btn" id="prevBtn" disabled>上一步</button>
-                            <button class="control-btn" id="nextBtn">下一步</button>
-                            <button class="control-btn" id="resetBtn">重新開始</button>
+                            <div class="btn-3d-container">
+                                <button class="btn-3d" id="prevBtn" disabled>
+                                    <div class="back"></div>
+                                    <div class="front">←</div>
+                                </button>
+                                <span class="btn-3d-label">上一步</span>
+                            </div>
+                            <div class="btn-3d-container">
+                                <button class="btn-3d" id="nextBtn">
+                                    <div class="back"></div>
+                                    <div class="front">→</div>
+                                </button>
+                                <span class="btn-3d-label">下一步</span>
+                            </div>
                         </div>
 
                         <div class="jump-controls">

@@ -571,7 +571,6 @@ class PixelPicApp {
         this.currentColorSample = document.getElementById('currentColorSample');
         this.prevBtn = document.getElementById('prevBtn');
         this.nextBtn = document.getElementById('nextBtn');
-        this.resetBtn = document.getElementById('resetBtn');
         this.currentStepSpan = document.getElementById('currentStep');
         this.totalStepsSpan = document.getElementById('totalSteps');
         this.progressFill = document.getElementById('progressFill');
@@ -609,7 +608,6 @@ class PixelPicApp {
         this.analyzeBtn.addEventListener('click', () => this.analyzeImage());
         this.prevBtn.addEventListener('click', () => this.previousStep());
         this.nextBtn.addEventListener('click', () => this.nextStep());
-        this.resetBtn.addEventListener('click', () => this.resetGuide());
         this.jumpBtn.addEventListener('click', () => this.jumpToStep());
         
         // 步驟輸入事件
@@ -1579,12 +1577,7 @@ class PixelPicApp {
         }
     }
     
-    resetGuide() {
-        this.currentStep = 0;
-        this.updateStepDisplay();
-        this.highlightCurrentStep();
-        this.updateStepInput();
-    }
+    // resetGuide 方法已删除，因为重置按钮已移除
     
     initializeStepInput() {
         this.stepInput.max = this.totalSteps;
